@@ -1,13 +1,11 @@
-var cheerio = require('cheerio');
 var request = require('request-promise');
 var iconv = require('iconv-lite');
-var fs = require('fs');
 var config = require('config');
 
 var htmlLogging = false;
 
 exports.handler = function(event, context, callback) {
-    loginConfig = config.get('etoland');
+    var loginConfig = config.get('etoland');
 
     var mainPage = {
         uri: 'https://etoland.co.kr/',
@@ -78,35 +76,12 @@ exports.handler = function(event, context, callback) {
     }
 
     request(mainPage).then(function(html){
-        var $ = cheerio.load(html);
-
-        if (htmlLogging) {
-            fs.writeFileSync('main.html', html, 'binary');
-        }
-
         return request(loginPage);
     }).then(function(html) {
-        var $ = cheerio.load(html);
-
-        if (htmlLogging) {
-            fs.writeFileSync('login.html', html, 'binary');
-        }
-
         return request(attendPage);
     }).then(function(html){
-        var $ = cheerio.load(html);
-
-        if (htmlLogging) {
-            fs.writeFileSync('attend.html', html, 'binary');
-        }
-
         return request(attendUpdatePage);
     }).then(function(html){
-        var $ = cheerio.load(html);
-
-        if (htmlLogging) {
-            fs.writeFileSync('attend-update.html', html, 'binary');
-        }
         console.log(iconv.decode(Buffer.from(html, 'binary'), 'euc-kr'));
     }).catch(function(error) {
         if (error) {throw error};
