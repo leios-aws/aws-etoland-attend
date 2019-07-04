@@ -2,8 +2,6 @@ var request = require('request-promise');
 var iconv = require('iconv-lite');
 var config = require('config');
 
-var htmlLogging = false;
-
 exports.handler = function(event, context, callback) {
     var loginConfig = config.get('etoland');
 
@@ -21,7 +19,7 @@ exports.handler = function(event, context, callback) {
         jar: true,
         gzip: true,
         encoding: null
-    }
+    };
     var loginPage = {
         uri: 'https://etoland.co.kr/bbs/login_check2.php',
         method: 'POST',
@@ -40,7 +38,7 @@ exports.handler = function(event, context, callback) {
         jar: true,
         gzip: true,
         encoding: null
-    }
+    };
     var attendPage = {
         uri: 'http://etoland.co.kr/check/index.php',
         method: 'GET',
@@ -55,7 +53,7 @@ exports.handler = function(event, context, callback) {
         jar: true,
         gzip: true,
         encoding: null
-    }
+    };
     var attendUpdatePage = {
         uri: 'http://etoland.co.kr/check/attendance-update.php',
         method: 'POST',
@@ -73,7 +71,7 @@ exports.handler = function(event, context, callback) {
         jar: true,
         gzip: true,
         encoding: null
-    }
+    };
 
     request(mainPage).then(function(html){
         return request(loginPage);
@@ -84,7 +82,9 @@ exports.handler = function(event, context, callback) {
     }).then(function(html){
         console.log(iconv.decode(Buffer.from(html, 'binary'), 'euc-kr'));
     }).catch(function(error) {
-        if (error) {throw error};
+        if (error) {
+            throw error;
+        }
     });
 
     if (callback) {
