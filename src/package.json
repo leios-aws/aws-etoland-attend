@@ -1,0 +1,11 @@
+{
+  "name": "node-daily",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node -e \"require('./index.js').handler({key1: 'value1', key2: 'value2', key3: 'value3'})\""
+  },
+  "author": "",
+  "license": "ISC"
+}
