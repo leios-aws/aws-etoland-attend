@@ -3,7 +3,7 @@ var iconv = require('iconv-lite');
 var config = require('config');
 
 exports.handler = function(event, context, callback) {
-    var loginConfig = config.get('etoland');
+    var authConfig = config.get('auth');
 
     var mainPage = {
         uri: 'https://etoland.co.kr/',
@@ -25,8 +25,8 @@ exports.handler = function(event, context, callback) {
         method: 'POST',
         form: {
             url: 'https://etoland.co.kr', 
-            mb_id: loginConfig.id, 
-            mb_password: loginConfig.pw
+            mb_id: authConfig.id, 
+            mb_password: authConfig.pw
         },
         headers: {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
