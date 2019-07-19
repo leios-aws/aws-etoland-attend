@@ -16,26 +16,26 @@ var req = request.defaults({
     encoding: null
 });
 
-var requestMainPage = function(callback) {
+var requestMainPage = function (callback) {
     var option = {
         uri: 'https://etoland.co.kr/',
         method: 'GET',
     };
 
-    req(option, function (err, response, body) {
+    req(option, function (e, r, b) {
         console.log("Request Main Page");
-        callback(err, response, body);
+        callback(e, r, b);
     });
 };
 
-var requestLoginPage = function(response, body, callback) {
+var requestLoginPage = function (response, body, callback) {
     var authConfig = config.get('auth');
     var option = {
         uri: 'https://etoland.co.kr/bbs/login_check2.php',
         method: 'POST',
         form: {
-            url: 'https://etoland.co.kr', 
-            mb_id: authConfig.id, 
+            url: 'https://etoland.co.kr',
+            mb_id: authConfig.id,
             mb_password: authConfig.pw
         },
         headers: {
@@ -43,45 +43,45 @@ var requestLoginPage = function(response, body, callback) {
         },
     };
 
-    req(option, function (err, response, body) {
+    req(option, function (e, r, b) {
         console.log("Request Login Page");
-        callback(err, response, body);
+        callback(e, r, b);
     });
 };
 
-var requestAttendPage = function(response, body, callback) {
+var requestAttendPage = function (response, body, callback) {
     var option = {
         uri: 'http://etoland.co.kr/check/index.php',
         method: 'GET',
     };
 
-    req(option, function (err, response, body) {
+    req(option, function (e, r, b) {
         console.log("Request Attend Page");
-        callback(err, response, body);
+        callback(e, r, b);
     });
-}
+};
 
-var requestAttendUpdatePage = function(response, body, callback) {
+var requestAttendUpdatePage = function (response, body, callback) {
     var option = {
         uri: 'http://etoland.co.kr/check/attendance-update.php',
         method: 'POST',
         form: {
-            at_memo: iconv.encode("포인트충전소에서 포인트를 적립해보세요", 'euc-kr'), 
-            at_memo2: "../../bbs/board.php?bo_table=point1", 
+            at_memo: iconv.encode("포인트충전소에서 포인트를 적립해보세요", 'euc-kr'),
+            at_memo2: "../../bbs/board.php?bo_table=point1",
             clicks: "1"
         },
     };
 
-    req(option, function (err, response, body) {
+    req(option, function (e, r, b) {
         console.log("Request Attend Update Page");
-        if (!err) {
+        if (!e) {
             console.log(iconv.decode(Buffer.from(body, 'binary'), 'euc-kr'));
         }
-        callback(err, response, body);
+        callback(e, r, b);
     });
-}
+};
 
-exports.handler = function(event, context, callback) {
+exports.handler = function (event, context, callback) {
     async.waterfall([
         requestMainPage,
         requestLoginPage,
@@ -95,5 +95,5 @@ exports.handler = function(event, context, callback) {
         if (callback) {
             callback(null, 'Success');
         }
-    })
+    });
 };
