@@ -45,7 +45,11 @@ var requestLoginPage = function (response, body, callback) {
 
     req(option, function (e, r, b) {
         console.log("Request Login Page");
-        callback(e, r, b);
+        if (!e && b.indexOf("location.replace('https://etoland.co.kr');") < 0) {
+            console.log(iconv.decode(Buffer.from(b, 'binary'), 'euc-kr'));
+        } else {
+            callback(e, r, b);
+        }
     });
 };
 
@@ -75,7 +79,7 @@ var requestAttendUpdatePage = function (response, body, callback) {
     req(option, function (e, r, b) {
         console.log("Request Attend Update Page");
         if (!e) {
-            console.log(iconv.decode(Buffer.from(body, 'binary'), 'euc-kr'));
+            console.log(iconv.decode(Buffer.from(b, 'binary'), 'euc-kr'));
         }
         callback(e, r, b);
     });
