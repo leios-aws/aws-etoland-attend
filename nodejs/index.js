@@ -59,7 +59,7 @@ var requestAttendPage = function(response, body, callback) {
         console.log("Request Attend Page");
         callback(err, response, body);
     });
-}
+};
 
 var requestAttendUpdatePage = function(response, body, callback) {
     var option = {
@@ -79,7 +79,7 @@ var requestAttendUpdatePage = function(response, body, callback) {
         }
         callback(err, response, body);
     });
-}
+};
 
 exports.handler = function(event, context, callback) {
     async.waterfall([
@@ -95,5 +95,5 @@ exports.handler = function(event, context, callback) {
         if (callback) {
             callback(null, 'Success');
         }
-    })
+    });
 };
