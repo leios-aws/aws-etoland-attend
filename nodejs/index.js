@@ -16,19 +16,22 @@ var req = request.defaults({
     encoding: null
 });
 
-var requestMainPage = function (callback) {
+var requestMainPage = function (result, callback) {
     var option = {
         uri: 'https://etoland.co.kr/',
         method: 'GET',
     };
 
-    req(option, function (e, r, b) {
+    req(option, function (err, response, body) {
+        result.response = response;
+        result.body = body;
+
         console.log("Request Main Page");
-        callback(e, r, b);
+        callback(err, result);
     });
 };
 
-var requestLoginPage = function (response, body, callback) {
+var requestLoginPage = function (result, callback) {
     var authConfig = config.get('auth');
     var option = {
         uri: 'https://etoland.co.kr/bbs/login_check2.php',
@@ -43,29 +46,37 @@ var requestLoginPage = function (response, body, callback) {
         },
     };
 
-    req(option, function (e, r, b) {
+    req(option, function (err, response, body) {
+        result.response = response;
+        result.body = iconv.decode(Buffer.from(body, 'binary'), 'euc-kr');
+        result.data.login_result = result.body;
+
         console.log("Request Login Page");
-        if (!e && b.indexOf("location.replace('https://etoland.co.kr');") < 0) {
-            console.log(iconv.decode(Buffer.from(b, 'binary'), 'euc-kr'));
+        if (!err && result.body.indexOf("location.replace('https://etoland.co.kr');") < 0) {
+            //console.log(result.body);
+            callback("Login Fail!", result);
         } else {
-            callback(e, r, b);
+            callback(err, result);
         }
     });
 };
 
-var requestAttendPage = function (response, body, callback) {
+var requestAttendPage = function (result, callback) {
     var option = {
         uri: 'http://etoland.co.kr/check/index.php',
         method: 'GET',
     };
 
-    req(option, function (e, r, b) {
+    req(option, function (err, response, body) {
+        result.response = response;
+        result.body = body;
+
         console.log("Request Attend Page");
-        callback(e, r, b);
+        callback(err, result);
     });
 };
 
-var requestAttendUpdatePage = function (response, body, callback) {
+var requestAttendUpdatePage = function (result, callback) {
     var option = {
         uri: 'http://etoland.co.kr/check/attendance-update.php',
         method: 'POST',
@@ -76,28 +87,34 @@ var requestAttendUpdatePage = function (response, body, callback) {
         },
     };
 
-    req(option, function (e, r, b) {
+    req(option, function (err, response, body) {
+        result.response = response;
+        result.body = iconv.decode(Buffer.from(body, 'binary'), 'euc-kr');
+        result.data.attend_result = result.body;
+
         console.log("Request Attend Update Page");
-        if (!e) {
-            console.log(iconv.decode(Buffer.from(b, 'binary'), 'euc-kr'));
+        if (!err && result.body.indexOf('출석체크완료') < 0) {
+            callback("Attend fail", result);
+        } else {
+            callback(err, result);
         }
-        callback(e, r, b);
     });
 };
 
 exports.handler = function (event, context, callback) {
     async.waterfall([
+        function (callback) {
+            callback(null, { data: {} });
+        },
         requestMainPage,
         requestLoginPage,
         requestAttendPage,
         requestAttendUpdatePage,
-    ], function (err) {
-        if (err) {
-            console.log(err);
-        }
+    ], function (err, result) {
+        console.log({err: err, data: result.data});
 
         if (callback) {
-            callback(null, 'Success');
+            callback(null);
         }
     });
 };
