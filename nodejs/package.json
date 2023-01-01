@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "async": "^3.1.0",
-    "config": "^3.2.1",
+    "config": "^3.3.8",
     "iconv-lite": "^0.5.0",
     "request": "^2.88.0"
   }
